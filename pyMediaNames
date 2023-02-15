@@ -1,0 +1,79 @@
+# Load the std Python library modules
+import os
+import argparse
+from datetime import datetime
+import time
+import platform
+# Load own modules
+from mod_Extract_ExifData import Extract_ExifData
+from mod_Read_Config import Read_Config
+
+#
+# Important functions, loaded in mainscript rather than from a custom/ownlibrary
+# 
+def Write_Message(severity, message):
+    now = datetime.now()
+    nowFormatted = now.strftime('%Y-%m%d %H%M%S')
+
+    if severity == "INFO":
+        print(f"{nowFormatted} - \033[0;32;40mINFO: {message}\033[0;0m'") # green on black
+    elif severity == "WARNING":
+        print(f"{nowFormatted} - \033[0;36;40mWARNING: {message}\033[0;0m'") # cyan on black
+    elif severity == "ERROR":
+        print(f"{nowFormatted} - \033[0;31;40mERROR: {message}\033[0;0m'") # red on black
+    else:
+        print(f"{nowFormatted} - \033[0;31;44mFATAL: {message}\033[0;0m'") # Red on blue
+
+def CleanExit(sleepTime):
+    Write_Message("INFO", f"INFO: Done! This window will close in {sleepTime} seconds")
+    time.sleep(sleepTime)
+    os._exit(0)
+
+def get_arguments():
+    # Get Commandline Arguments
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-SettingsFile')
+    args=parser.parse_args()
+    if not args.SettingsFile:
+        return "settings.json" # default settings filename
+    else:
+        return args.SettingsFile
+# #############
+# Main function. It starts here
+# #############
+def main():
+    # ===============
+    # CHECK PLATFORM: Is it linux? If yes, we're good to go
+    # ===============
+    currentPlatform = platform.system()
+    if currentPlatform != 'Linux':
+        Write_Message('ERROR', ':Platform is not supported. Stopping!!!')
+        CleanExit(10)
+    
+    Write_Message("INFO", f"Script {os.path.basename(__file__)} is triggered, Starting its execution now...")
+    settingsFileName = get_arguments()
+
+    # Set some usefull variables
+    scriptPath = os.path.dirname(__file__)
+    settingsFileName = f"{scriptPath}/{settingsFileName}"
+
+    # ===============
+    # READ THE CONFIGuration file
+    # ===============
+    Write_Message("INFO", f"Will make an attempt to read and interpret settinsgfile {settingsFileName}")
+    settingsObject = Read_Config(settingsFileName, scriptPath)
+
+
+
+    iam = Extract_ExifData("./ProcessFolder/00-Diversen/2022-0520 143137 - Motorhandschoenen gekocht van Verjaardagsbon.jpg")
+
+    Write_Message("INFO", f"Will use {settingsFileName} to collect program settings")
+    Write_Message("WARNING", iam.get('Make'))
+    Write_Message("ERROR", iam.get('Model'))
+    Write_Message("FATAL", iam.get('DateTime'))
+
+
+
+
+if __name__ == '__main__':
+    main()

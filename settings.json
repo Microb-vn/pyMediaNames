@@ -1,0 +1,34 @@
+{
+    "Mode": "Standard",
+    "ProcessFolder": "./ProcessFolder",
+    "Objects": [
+        {
+            "Type": "Photo",
+            "Identifiers": [
+                ".jpg",
+                ".png"
+            ],
+            "InputYearPos": "0",
+            "InputMonthPos": "4",
+            "InputDayPos": "6",
+            "InputHourPos": "9",
+            "InputMinutePos": "11",
+            "InputSecondPos": "13",
+            "DesiredOutputMask": "yyyy-MMdd HHmmss"
+        },
+        {
+            "Type": "video",
+            "Identifiers": [
+                ".mp4",
+                ".mov"
+            ],
+            "InputYearPos": "0",
+            "InputMonthPos": "4",
+            "InputDayPos": "6",
+            "InputHourPos": "9",
+            "InputMinutePos": "11",
+            "InputSecondPos": "13",
+            "DesiredOutputMask": "yyyy-MMdd HHmmss"
+        }
+    ]
+}
