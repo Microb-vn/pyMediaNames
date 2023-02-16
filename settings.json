@@ -14,10 +14,10 @@
             "InputHourPos": "9",
             "InputMinutePos": "11",
             "InputSecondPos": "13",
-            "DesiredOutputMask": "yyyy-MMdd HHmmss"
+            "DesiredOutputMask": "%Y-%m%d %H%M%S"
         },
         {
-            "Type": "video",
+            "Type": "Video",
             "Identifiers": [
                 ".mp4",
                 ".mov"
@@ -28,7 +28,7 @@
             "InputHourPos": "9",
             "InputMinutePos": "11",
             "InputSecondPos": "13",
-            "DesiredOutputMask": "yyyy-MMdd HHmmss"
+            "DesiredOutputMask": "%Y-%m%d %H%M%SA"
         }
     ]
 }

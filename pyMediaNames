@@ -53,7 +53,7 @@ def main():
     Write_Message("INFO", f"Script {os.path.basename(__file__)} is triggered, Starting its execution now...")
     settingsFileName = get_arguments()
 
-    # Set some usefull variables
+    # Set some generally used variables
     scriptPath = os.path.dirname(__file__)
     settingsFileName = f"{scriptPath}/{settingsFileName}"
 
@@ -62,12 +62,15 @@ def main():
     # ===============
     Write_Message("INFO", f"Will make an attempt to read and interpret settinsgfile {settingsFileName}")
     settingsObject = Read_Config(settingsFileName, scriptPath)
-
+    if type(settingsObject) == str:
+        Write_Message("ERROR",settingsObject)
+        CleanExit(10)
+    Write_Message("INFO", f"All values in settinsgfile {settingsFileName} are approved, continuing...")
+    
 
 
     iam = Extract_ExifData("./ProcessFolder/00-Diversen/2022-0520 143137 - Motorhandschoenen gekocht van Verjaardagsbon.jpg")
 
-    Write_Message("INFO", f"Will use {settingsFileName} to collect program settings")
     Write_Message("WARNING", iam.get('Make'))
     Write_Message("ERROR", iam.get('Model'))
     Write_Message("FATAL", iam.get('DateTime'))
