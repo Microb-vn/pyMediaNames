@@ -4,6 +4,7 @@ import argparse
 from datetime import datetime
 import time
 import platform
+import pathlib
 # Load own modules
 from mod_Extract_ExifData import Extract_ExifData
 from mod_Read_Config import Read_Config
@@ -16,16 +17,16 @@ def Write_Message(severity, message):
     nowFormatted = now.strftime('%Y-%m%d %H%M%S')
 
     if severity == "INFO":
-        print(f"{nowFormatted} - \033[0;32;40mINFO: {message}\033[0;0m'") # green on black
+        print(f"{nowFormatted} - \033[0;32;40mINFO: {message}\033[0;0m") # green on black
     elif severity == "WARNING":
-        print(f"{nowFormatted} - \033[0;36;40mWARNING: {message}\033[0;0m'") # cyan on black
+        print(f"{nowFormatted} - \033[0;36;40mWARNING: {message}\033[0;0m") # cyan on black
     elif severity == "ERROR":
-        print(f"{nowFormatted} - \033[0;31;40mERROR: {message}\033[0;0m'") # red on black
+        print(f"{nowFormatted} - \033[0;31;40mERROR: {message}\033[0;0m") # red on black
     else:
-        print(f"{nowFormatted} - \033[0;31;44mFATAL: {message}\033[0;0m'") # Red on blue
+        print(f"{nowFormatted} - \033[0;31;44mFATAL: {message}\033[0;0m") # Red on blue
 
 def CleanExit(sleepTime):
-    Write_Message("INFO", f"INFO: Done! This window will close in {sleepTime} seconds")
+    Write_Message("INFO", f"Done! This window will close in {sleepTime} seconds")
     time.sleep(sleepTime)
     os._exit(0)
 
@@ -38,6 +39,13 @@ def get_arguments():
         return "settings.json" # default settings filename
     else:
         return args.SettingsFile
+
+# Custom class to capture file info
+class fileInfo():
+    def __init__(self, filePath, fileExtension):
+        self.filePath = filePath
+        self.fileExtension = fileExtension
+
 # #############
 # Main function. It starts here
 # #############
@@ -67,8 +75,40 @@ def main():
         CleanExit(10)
     Write_Message("INFO", f"All values in settinsgfile {settingsFileName} are approved, continuing...")
     
+    # Find abd collect all files from ProcessFolder (recursivelly)
 
+    allFiles = []
+    for path,dirs,files in os.walk(settingsObject['ProcessFolder']):
+        for filename in files:
+            fileExtension = pathlib.Path(filename).suffix
+            allFiles.append(fileInfo(os.path.join(path,filename),fileExtension))
 
+    # Go thru all the files one by one to determine what type of file it is
+    for file in allFiles:
+        fileObject = None
+        Write_Message("INFO", '------------------------------------------------------')
+        # Did we process the file already?
+        if "]." in file.filePath and settingsObject["Mode"] == "Standard":
+            Write_Message( "WARNING" f"It looks like file {file.filePath} has been processed before; will take no action!")
+            break
+        # See what type of file we have
+        for object in settingsObject["Objects"]:
+            if file.fileExtension in object["Identifiers"]:
+                fileObject = object
+                break
+
+        # Is the file a video or photo?
+        if fileObject:
+            if fileObject["Type"] == "Photo":
+               Write_Message("INFO", f"file {file.filePath} is a PHOTO file; will process it as such in {settingsObject['Mode']} mode")
+               if settingsObject['Mode'] == "Standard":
+                    Write_Message("INFO","Call Standard module")
+               else:
+                    Write_Message("INFO","Call EXIF module")
+            else:
+               Write_Message("INFO", f"file {file.filePath} is a VIDEO file; will process it as such")
+        else:
+            Write_Message( "WARNING", f"File {file.filePath} is of an unknow file type ({file.fileExtension}); will skip the file")
     iam = Extract_ExifData("./ProcessFolder/00-Diversen/2022-0520 143137 - Motorhandschoenen gekocht van Verjaardagsbon.jpg")
 
     Write_Message("WARNING", iam.get('Make'))

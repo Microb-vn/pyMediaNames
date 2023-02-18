@@ -28,7 +28,7 @@
             "InputHourPos": "9",
             "InputMinutePos": "11",
             "InputSecondPos": "13",
-            "DesiredOutputMask": "%Y-%m%d %H%M%SA"
+            "DesiredOutputMask": "%Y-%m%d %H%M%S"
         }
     ]
 }
