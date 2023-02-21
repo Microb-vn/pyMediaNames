@@ -59,9 +59,12 @@ def Read_Config(file, scriptpath):
         else:
             return f"Invalid Object Type found ({object['Type']}) in settingsfile {file}"
         # Are all Inputxxxpos values numbers?
-        testValue = f"{object['InputYearPos']}{object['InputMonthPos']}{object['InputDayPos']}{object['InputHourPos']}{object['InputMinutePos']}{object['InputSecondPos']}"
+        try:
+            testValue = f"{object['InputYearPos']}{object['InputMonthPos']}{object['InputDayPos']}{object['InputHourPos']}{object['InputMinutePos']}{object['InputSecondPos']}"
+        except:
+            testValue = "ERROR"
         if not testValue.isnumeric():
-            return f"One of the DateTime positions of object {object['Type']} in settingsfile {file} is not numeric; please check!"
+            return f"One of the DateTime positions of object {object['Type']} in settingsfile {file} is missing or not numeric; please check!"
         
         try:
             testValue = datetime.now().strftime(object['DesiredOutputMask'])
