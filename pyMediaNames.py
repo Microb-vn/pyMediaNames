@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 # Load the std Python library modules
 import os
 import sys
@@ -83,8 +85,8 @@ def main():
         Write_Message("INFO", '------------------------------------------------------')
         # Did we process the file already?
         if "]." in file.filePath and settingsObject["Mode"] == "Standard":
-            Write_Message( "WARNING" f"It looks like file {file.filePath} has been processed before; will take no action!")
-            break
+            Write_Message("WARNING", f"It looks like file {file.filePath} has been processed before; will take no action!")
+            continue
         # See what type of file we have
         for object in settingsObject["Objects"]:
             if file.fileExtension in object["Identifiers"]:

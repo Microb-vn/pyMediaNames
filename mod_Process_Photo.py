@@ -3,7 +3,14 @@ import os
 import time
 # import own modules
 from mod_Extract_ExifData import Extract_ExifData
+from mod_Update_ExifData import Update_ExifData
 from mod_Write_Message import Write_Message
+
+# Custom class to store updates for exifData
+class exifObject():
+    def __init__(self, propertyNr, propertyValue):
+        self.propertyNr = propertyNr
+        self.propertyValue = propertyValue
 
 def Process_Photo(file, fileObject):
     
@@ -18,6 +25,8 @@ def Process_Photo(file, fileObject):
     exifData = Extract_ExifData(file.filePath)
     if type(exifData) == str:
         exifDate=False
+        Write_Message("WARNING", f"Found NO EXIF data in photo file ({file.filePath}); will skip further processing for this file ")
+        return
     else:
         Write_Message("INFO", f"Found EXIF data in photo file ({file.filePath}).")
         try:
@@ -29,9 +38,6 @@ def Process_Photo(file, fileObject):
             minute=int(exifData["DateTime"][14:16])
             second=int(exifData["DateTime"][17:19])
             fileNameDate = datetime(yyyy, mm, dd, hour, minute, second)
-###############################
-            mm=int("abc")
-###############################
             exifDate=True
         except:
             exifDate=False
@@ -53,27 +59,43 @@ def Process_Photo(file, fileObject):
             second = file.fileName[inputSecondPos:inputSecondPos+2]
         try:
             fileNameDate = datetime(int(yyyy), int(mm), int(dd), int(hour), int(minute), int(second))
-###############################
-            mm=int("abc")
-###############################
         except:
             fileNameDate = None
 
     if not fileNameDate:
-        Write_Message("INFO", f"Could not compose a valid date from Photo Filname ({file.filePath}); will use the file creation date")
+        Write_Message("INFO", f"Could not compose a valid date from Photo Filename ({file.filePath}); will use the file creation date")
         fileNameDate = time.strptime(time.ctime(os.path.getctime(file.filePath)))
+        # Convert time tuple into datetime object
+        fileNameDate = datetime.fromtimestamp(time.mktime(fileNameDate))
     
-    dateInDesiredFormat = time.strftime(fileObject["DesiredOutputMask"], fileNameDate)
+    dateInDesiredFormat = fileNameDate.strftime(fileObject["DesiredOutputMask"])
 
     # Do we need o change the filename?
     if file.fileName.startswith(dateInDesiredFormat):
         Write_Message("INFO", f"Found desired date ({dateInDesiredFormat}); filename ({file.fileName}) already has this format, no action required")
         exifFileName = file.filePath
     else:
-        newName = "DOEN"
+        fileFolder = file.filePath.replace(file.fileName,"")
+        fileNameNoExt = file.fileName.replace(file.fileExtension,'')
+        newName = f"{fileFolder}{dateInDesiredFormat} - [{fileNameNoExt}]{file.fileExtension}"
         Write_Message("INFO", f"Found desired date ({dateInDesiredFormat}); will change filename of {file.fileName} to {newName}")
-        exifFileName = file.filePath
-        tbc
+        exifFileName = newName
+        os.rename(file.filePath, newName)
+    #
+    # Do we need to udate or add exifdate?
+    if not exifDate:
+        # There is no ExifData yet, create the basic info
+        Write_Message("INFO", "As no valid Exif date is found, will update that with what was found during this scan"      )
 
+        exifObjects = []
+        
+        exifObjects.append(exifObject(271, "ADDED BY SCRIPT"))
+        exifObjects.append(exifObject(272, "UNKNOWN"))
+        newExifDate = fileNameDate.strftime("%Y:%m:%d %H:%M:%S")
+        exifObjects.append(exifObject(36868, newExifDate))
 
-    return "To be developed"
+        result = Update_ExifData(exifFileName, exifObjects)
+        if result != "Ok":
+            Write_Message("WARNING", result)
+
+    return
