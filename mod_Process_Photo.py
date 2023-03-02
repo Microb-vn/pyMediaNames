@@ -12,7 +12,7 @@ class exifObject():
         self.propertyNr = propertyNr
         self.propertyValue = propertyValue
 
-def Process_Photo(file, fileObject):
+def Process_Photo(file, fileObject, settingsObject):
     
     inputYearPos = int(fileObject["InputYearPos"])
     inputMonthPos = int(fileObject["InputMonthPos"])
@@ -21,6 +21,7 @@ def Process_Photo(file, fileObject):
     inputMinutePos = int(fileObject["InputMinutePos"])
     inputSecondPos = int(fileObject["InputSecondPos"])
     desiredOutputMask = fileObject["DesiredOutputMask"]
+
     # Try to extract the exif data
     exifData = Extract_ExifData(file.filePath)
     if type(exifData) == str:
@@ -68,16 +69,23 @@ def Process_Photo(file, fileObject):
         # Convert time tuple into datetime object
         fileNameDate = datetime.fromtimestamp(time.mktime(fileNameDate))
     
-    dateInDesiredFormat = fileNameDate.strftime(fileObject["DesiredOutputMask"])
+    dateInDesiredFormat = fileNameDate.strftime(desiredOutputMask)
 
     # Do we need o change the filename?
-    if file.fileName.startswith(dateInDesiredFormat):
-        Write_Message("INFO", f"Found desired date ({dateInDesiredFormat}); filename ({file.fileName}) already has this format, no action required")
+    fileNameNoExt = file.fileName.replace(file.fileExtension,'')
+    if settingsObject["NewFileName"] == "KeepCurrent": 
+        desiredNewFileName = f"[{fileNameNoExt}]"
+    elif settingsObject["NewFileName"] == "FromParentFolder":
+        desiredNewFileName = os.path.basename(os.path.dirname(file.filePath))
+    else:
+        desiredNewFileName = settingsObject["NewFileName"]
+    
+    if file.fileName.startswith(dateInDesiredFormat) and fileNameNoExt == desiredNewFileName:
+        Write_Message("INFO", f"Found desired date ({dateInDesiredFormat}) and suggested new filename ({desiredNewFileName}); filename ({file.fileName}) already has this format, no action required")
         exifFileName = file.filePath
     else:
         fileFolder = file.filePath.replace(file.fileName,"")
-        fileNameNoExt = file.fileName.replace(file.fileExtension,'')
-        newName = f"{fileFolder}{dateInDesiredFormat} - [{fileNameNoExt}]{file.fileExtension}"
+        newName = f"{fileFolder}{dateInDesiredFormat} - {desiredNewFileName}{file.fileExtension}"
         Write_Message("INFO", f"Found desired date ({dateInDesiredFormat}); will change filename of {file.fileName} to {newName}")
         exifFileName = newName
         os.rename(file.filePath, newName)
@@ -92,6 +100,7 @@ def Process_Photo(file, fileObject):
         exifObjects.append(exifObject(271, "ADDED BY SCRIPT"))
         exifObjects.append(exifObject(272, "UNKNOWN"))
         newExifDate = fileNameDate.strftime("%Y:%m:%d %H:%M:%S")
+        exifObjects.append(exifObject(306, newExifDate))
         exifObjects.append(exifObject(36868, newExifDate))
 
         result = Update_ExifData(exifFileName, exifObjects)
