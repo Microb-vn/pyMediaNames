@@ -94,13 +94,10 @@ def main():
         # Is the file a video or photo?
         if fileObject:
             if fileObject["Type"] == "Photo":
-               Write_Message("INFO", f"file {file.filePath} is a PHOTO file; will process it as such in {settingsObject['Mode']} mode")
-               if settingsObject['Mode'] == "Standard":
-                    Process_Photo(file, fileObject, settingsObject)
-               else:
-                    Process_Photo_Exif(file, fileObject, settingsObject)
+               Write_Message("INFO", f"file {file.filePath} is a PHOTO file; will process it as such")
+               Process_Photo(file, fileObject, settingsObject)
             else:
-                Write_Message("INFO", f"file {file.filePath} is a VIDEO file; will process it as such in {settingsObject['Mode']} mode")
+                Write_Message("INFO", f"file {file.filePath} is a VIDEO file; will process it as such")
                 Process_Video(file, fileObject, settingsObject)
         else:
             Write_Message( "WARNING", f"File {file.filePath} is of an unknow file type ({file.fileExtension}); will skip the file")

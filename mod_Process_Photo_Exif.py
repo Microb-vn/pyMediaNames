@@ -13,7 +13,7 @@ class exifObject():
         self.propertyNr = propertyNr
         self.propertyValue = propertyValue
 
-def Process_Photo_Exif(file, fileObject, settingsObject):
+def Process_Photo_Exif_Remove(file, fileObject, settingsObject):
     
     inputYearPos = int(fileObject["InputYearPos"])
     inputMonthPos = int(fileObject["InputMonthPos"])

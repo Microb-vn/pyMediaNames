@@ -15,8 +15,8 @@ def Process_Video(file, fileObject, settingsObject):
     inputSecondPos = int(fileObject["InputSecondPos"])
     desiredOutputMask = fileObject["DesiredOutputMask"]
 
-    if settingsObject["Mode"] == "ExifFullUpdate" and settingsObject["ExifDateTime"] != "FromFileDetails":
-        fileNameDate = parse(settingsObject["ExifDateTime"])
+    if settingsObject["NewDateTime"] != "FromFileDetails":
+        fileNameDate = parse(settingsObject["NewDateTime"])
     else:
         yyyy = mm = dd = hour = minute = second = None
         if len(file.fileName) >= inputDayPos+2:

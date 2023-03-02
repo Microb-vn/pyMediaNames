@@ -40,14 +40,12 @@ The configuration is arranged with a *settings.json* file. This file typically l
 
 ```json
 {
-    "Mode": "Standard",
     "ProcessFolder": "./ProcessFolder",
-    "NewFileName": "KeepCurrent",
     "ExifDeviceMake": "HP",
     "ExifDeviceModel": "MFP M180N",
-    "ExifDateTime": "{datetime}",
-    "FileTitle": "ScannedImage",
-    "FileComment": "Scanned at {datetime}",
+    "FileTitle":  "Scanned at {datetime}",
+    "NewDateTime": "{datetime}",
+    "NewFileName": "KeepCurrent",
     "Objects": [
         {
             "Type": "Photo",
@@ -83,15 +81,23 @@ The configuration is arranged with a *settings.json* file. This file typically l
 
 where the fields/attributes are:
 
-| Fieldname | Value |
-| --- | --- |
-| Mode | Processing Mode. This can be one of following values:<br>**Standard:** The media files are analyzed, data is taken from the file and/or Exif details and the filenames are updated<br>**ExifFullUpdate:** The media files are analyzed, and only Photos are processed differently (Video's will be treated according the 'Standard' method). Photo data is taken from the settingsfile (see next settings attributes), and the Exif data is updated with that information. Usefull for updating photo images that are scanned or copied using a scanner/camera.<br>*Note: Whichever method is used, the script will always attempt to keep the desired filename date and the Exif Date the same!* | 
-| ExifDeviceMake | When mode is ExifFullUpdate, this value can be used to store the Device Make in the Exif "Manufacturer" field. Only used when it contains a non-blank value |
-| ExifDeviceModel | When mode is ExifFullUpdate, this value can be used to store the Device Model in the Exif "Model" field. Only used when it contains a non-blank value |
-| ExifDateTime | When mode is ExifFullUpdate, this can have following values:<br>**FromFileDetails**: The script will make an attempt to extract the date & time from either the Filename (using the Input\<type\>Pos attributes in the settings file. When that fails, it will use the File's Creation Date and Time to set the ExifDateTime.<br>**\<Hardcoded-DateTime\>**: A valid Date&Time value, that will be used to set the ExifDateTime. Entering a value here is required!  |
-| ExifTitle | When mode is ExifFullUpdate, can be used to set the Title. Possible use is to set this to the method how the image is aquired (e.g. "Scanned at \<Hardcoded-DateTime\>", Copied with MobilePhone, etc..). . Only used when it contains a non-blank value |
+| Fieldname | Value | |
+| --- | --- | --- |
 | ProcessFolder | The folder that contains the photo and video files that you want to analyze/change. This folder can best be used to copy/paste all media you want to process into. After processing - and when satisfied with the processing results - you can use the contents of this folder to replace the original media. |
-| NewFileName | Can be either "KeepCurrent" "FromParentFolder" or the value you want to force on all files that are processed.<br>When the value is **KeepCurrent**, the new filename will be<br>*Desired Date Format- [original_file_name].\<extension\>*<br>When you specify  **FromParentFolder**, the new filename will built based on the name of its parent folder name.<br>  When any other value is used, the new filename(s) will become<br>*Desired Date Format- [your_entered_value].\<extension\>* |
+| ExifDeviceMake | This value can be used to force a value into the Device Make in the Exif "Manufacturer" field. Only used when it contains a non-blank value |
+| ExifDeviceModel | This value can be used to force a value into the Device Model in the Exif "Model" field. Only used when it contains a non-blank value |
+| ExifTitle | This parameter can be used to set the Title. Possible use is to set this to the method how the image is aquired (e.g. "Scanned at YYYY-mm-dd", "Copied with MobilePhone", etc..). . Only used when it contains a non-blank value |
+| NewDateTime | The way the Date&Time is determined that is used in the filename and (possible) EXIF data fields. This can have following values:<br>**FromFileDetails**: The script will make an attempt to extract the date & time from (in below order):<br>> the EXIF data<br>> the Filename (using the Input\<type\>Pos attributes in the settings file - see further down in this table).<br>> the File's Creation Date and Time.<br>**\<Hardcoded-DateTime\>**: A valid Date&Time value, that will be used to set the media's Date and Time. Entering a value for this parameter is required!  |
+| DesiredOutputMask | The date format you want to use in the new filename. When a valid new dat is discovered/determined, the new filename will be<br>*Formatted_Desired_Date - [OldFileName_or_value_of_NewFileName_Parameter].\<extension\>*<br>See below what can be specified in the mask.   |
+| | **Character in mask** | **Meaning** |
+| | %Y | Year of datetime. |
+| | %m | Month of datetime. |
+| | %d | Day of datetime. |
+| | %H | Hour of datetime in 24 hour format. |
+| | %I%p | Hour of datetime in 12 hour format with AM/PM indicator. Although this mask value is supported, it is strongly recommended to always is 24 hour format. This, to prevent confusion about the actual time the picture/video is taken.<br>In fact, the suggested format in the example is the most appropriate format to use. It allows you to properly sort the media in the order the pictures/videos were taken |
+| | %M | minute of datetime |
+| | %S | second of datetime |
+| NewFileName | Can be either "KeepCurrent", "FromParentFolder" or the value you want to force on all files that are processed.<br>When the value is<br>>  **KeepCurrent**, the new filename will be<br>*\<Date in Desired Date Format\> - [\<original_file_name\>].\<extension\>*<br>> **FromParentFolder**, the new filename will built based on the name of its parent folder name, so it will look like *\<Date in Desired Date Format\> - \<ParentFolderName\>.\<extension\>*.<br>  When any other value is used, the new filename(s) will become<br>*\<Date in Desired Date Format\>- \<your_entered_value\>.\<extension\>* |
 | Objects | The two possible filetypes that can be encountered in the ProcessFolder. Per object, following can be specified: |
 | Type | Can be Photo or Video. There should be one Object of each. |
 | Identifiers | The suffixes that identify the file of that type. This attribute is defined as a JSON array, meaning it can contain multiple values - so multiple file extensions.<br>**Make sure you enter the values in LOWERCASE only, so .jpg, .png, and NOT .JPG or .Jpg** |
@@ -101,15 +107,6 @@ where the fields/attributes are:
 | InputHourPos | Position in the existing filename where the two digit hour can be found. |
 | InputMinutePos | Position in the existing filename where the two digit minute can be found. |
 | InputSecondPos | Position in the existing filename where the two digit second can be found. |
-| DesiredOutputMask | The date format you want to use in the new filename. When a valid new dat is discovered/determined, the new filename will be<br>*Formatted_Desired_Date - [OldFileName_or_value_of_NewFileName_Parameter].\<extension\>*<br>See below what can be specified in the mask.   |
-| **Character in mask** | **Meaning** |
-| %Y | Year of datetime. |
-| %m | Month of datetime. |
-| %d | Day of datetime. |
-| %H | Hour of datetime in 24 hour format. |
-| %I%p | Hour of datetime in 12 hour format with AM/PM indicator. Although this mask value is supported, it is strongly recommended to always is 24 hour format. This, to prevent confusion about the actual time the picture/video is taken.<br>In fact, the suggested format in the example is the most appropriate format to use. It allows you to properly sort the media in the order the pictures/videos were taken |
-| %M | minute of datetime |
-| %S | second of datetime |
 
 > A few remarks about the **ProcessFolder name**:
 > - For JSON, a \ (backslash) is a special character - it actually is the "escape" character. When you want to specify an actual backslash, it must be "escaped" by the backslash escape character, meaning that for every blackslash you need, TWO backslashes must be typed.
@@ -138,9 +135,9 @@ To be able to support processing media taken by different devices - and when the
 
 For safety, always run the program against a set of copies of the photo's and video's.
 
-### About **processing scanned- or photo images**:
+### About **processing media images**:
 
-Best approach to process scanned (paper) photo images depends on the images you scan. Look at the below scenario's for different approaches:
+Best approach to process digital and/or scanned (paper) photo images depends on the media you process. Look at the below scenario's for different approaches:
 
 ### Scanned images for an event that took place on a special day...
 
@@ -150,7 +147,7 @@ Best approach to process scanned (paper) photo images depends on the images you 
 030 Our daytrip to Rio-Stop at Gasstation.jpg\
 etc..
 
-Once you're done with all images, perform a "ExifFullUpdate" run, with the actual "ExifDateTime" hardcoded to the date&time you took the trip in the JSON file.
+Once you're done with all images, execute the script with the actual "NewDateTime" hardcoded in the JSON file to the date&time you took the trip.
 
 ### Scanned images for an event that spans several days
 
@@ -162,11 +159,15 @@ You name all images with a filename including a date&time, like this:
 2023-0629 081500 Our to Rio-Breakfast at the hotel.jpg\
 etc..
 
-Once you're done with all images, perform a "ExifFullUpdate" run, with "ExifDateTime" coded with value "FromFileDetails".
+Once you're done with all images, perform a script execution, with "NewDateTime" coded with value "FromFileDetails" and the corresponding Input\<xxx\>pos positions according to what you named your files.
 
 ### Digital photo's and Video's
 
-Just run a "Standard" run, that should do the trick.
+Running the script with the "NewDateTime" set to "FromFileDetails" (and the correct nput\<xxx\>pos positions according to the file names), that should do the trick. When you want to process photos and videos that span several events, and want to show that in the media names, you could:
+
+- Place each set of media files for an event in a subfolder
+- Give each of the subfolders the name of the event
+
 
 ## Launching the script using different configurations
 

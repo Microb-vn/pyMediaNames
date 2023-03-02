@@ -14,33 +14,25 @@ def Read_Config(file, scriptpath):
         return 'Error occured while Attempting to ' + action
 
     # Check the contents
-    # Mode
     try:
-        testValue = settingsObject["Mode"]
+        # All optional parameters, plus the date:
+        dummy = settingsObject["ExifDeviceMake"]
+        dummy = settingsObject["ExifDeviceModel"]
+        dummy = settingsObject["FileTitle"]
+        dummy = settingsObject["NewDateTime"]
     except:
-        testValue = ""
-    if not testValue in ["Standard", "ExifFullUpdate"]:
-        return 'Mode in the settingsfile is missing or invalid'
-    if testValue == "ExifFullUpdate":
+        return "When mode is ExifFullUpdate, attributes ExifDeviceMake, ExifDeviceModel, ExifDateTime, and FileTitle must also be defined"
+    # Date must also have specific value: a valid date or "FromFileDetails"
+    if dummy != 'FromFileDetails':
         try:
-            # When we have a Mode of ExifFullUpdate, following fields need to be there too
-            dummy = settingsObject["ExifDeviceMake"]
-            dummy = settingsObject["ExifDeviceModel"]
-            dummy = settingsObject["FileTitle"]
-            dummy = settingsObject["ExifDateTime"]
+            parse(dummy)
         except:
-            return "When mode is ExifFullUpdate, attributes ExifDeviceMake, ExifDeviceModel, ExifDateTime, and FileTitle must also be defined"
-        # Date must also have specific value
-        if dummy != 'FromFileDetails':
-            try:
-                parse(dummy)
-            except:
-                return f"The specified ExifDateTime ({dummy}) in the settingsfile ({file}) is not a valid date; use your localized data format, or specify the value 'ExifFullUpdate'"
+            return f"The specified ExifDateTime ({dummy}) in the settingsfile ({file}) is not a valid date or 'FromFileDetails'"
     # ProcessFolder
     try:
         testValue = settingsObject["ProcessFolder"]
     except:
-        return "ProcessFolder is missing from {file}"
+        return f"ProcessFolder is missing from {file}"
     if testValue[0] == ".":
         testValue = testValue.replace(".",scriptpath, 1)
     if not isdir(testValue):
@@ -50,10 +42,10 @@ def Read_Config(file, scriptpath):
     try:
         testValue = settingsObject["NewFileName"]
     except:
-        return "NewFileName parameter is missing from {file}"
+        return f"NewFileName parameter is missing from {file}"
 
     if not testValue:
-        return "NewFileName is missing from {file}"
+        return f"NewFileName is missing from {file}"
 
     # Object nodes
     if len(settingsObject["Objects"]) != 2:
