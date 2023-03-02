@@ -19,7 +19,7 @@ def Read_Config(file, scriptpath):
         testValue = settingsObject["Mode"]
     except:
         testValue = ""
-    if not testValue in ["Standard", "ExifFullUdate"]:
+    if not testValue in ["Standard", "ExifFullUpdate"]:
         return 'Mode in the settingsfile is missing or invalid'
     if testValue == "ExifFullUpdate":
         try:
@@ -31,7 +31,7 @@ def Read_Config(file, scriptpath):
         except:
             return "When mode is ExifFullUpdate, attributes ExifDeviceMake, ExifDeviceModel, ExifDateTime, and FileTitle must also be defined"
         # Date must also have specific value
-        if dummy != 'ExifFullUpdate':
+        if dummy != 'FromFileDetails':
             try:
                 parse(dummy)
             except:
@@ -45,7 +45,16 @@ def Read_Config(file, scriptpath):
         testValue = testValue.replace(".",scriptpath, 1)
     if not isdir(testValue):
         return f"Could not find folder pointed to by ProcessFolder ({testValue}) in settingsfile {file}"
-    
+
+    # NewFileName
+    try:
+        testValue = settingsObject["NewFileName"]
+    except:
+        return "NewFileName parameter is missing from {file}"
+
+    if not testValue:
+        return "NewFileName is missing from {file}"
+
     # Object nodes
     if len(settingsObject["Objects"]) != 2:
         return f"The number of 'Objects' found in settingsfile {file} is {len(settingsObject['Objects'])}; this should be 2"

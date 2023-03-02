@@ -9,8 +9,6 @@ import time
 import platform
 import pathlib
 # Load own modules (globally)
-# from mod_Extract_ExifData import Extract_ExifData
-# from mod_Update_Exifdata import Update_ExifData
 from mod_Write_Message import Write_Message
 from mod_Read_Config import Read_Config
 from mod_Process_Photo import Process_Photo
@@ -84,12 +82,12 @@ def main():
         fileObject = None
         Write_Message("INFO", '------------------------------------------------------')
         # Did we process the file already?
-        if "]." in file.filePath and settingsObject["Mode"] == "Standard":
+        if "]." in file.filePath:
             Write_Message("WARNING", f"It looks like file {file.filePath} has been processed before; will take no action!")
             continue
         # See what type of file we have
         for object in settingsObject["Objects"]:
-            if file.fileExtension in object["Identifiers"]:
+            if file.fileExtension.lower() in object["Identifiers"]:
                 fileObject = object
                 break
 
@@ -98,11 +96,12 @@ def main():
             if fileObject["Type"] == "Photo":
                Write_Message("INFO", f"file {file.filePath} is a PHOTO file; will process it as such in {settingsObject['Mode']} mode")
                if settingsObject['Mode'] == "Standard":
-                    Process_Photo(file, fileObject)
+                    Process_Photo(file, fileObject, settingsObject)
                else:
                     Process_Photo_Exif(file, fileObject, settingsObject)
             else:
-                    Process_Video(file, fileObject)
+                Write_Message("INFO", f"file {file.filePath} is a VIDEO file; will process it as such in {settingsObject['Mode']} mode")
+                Process_Video(file, fileObject, settingsObject)
         else:
             Write_Message( "WARNING", f"File {file.filePath} is of an unknow file type ({file.fileExtension}); will skip the file")
 

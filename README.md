@@ -42,6 +42,7 @@ The configuration is arranged with a *settings.json* file. This file typically l
 {
     "Mode": "Standard",
     "ProcessFolder": "./ProcessFolder",
+    "NewFileName": "KeepCurrent",
     "ExifDeviceMake": "HP",
     "ExifDeviceModel": "MFP M180N",
     "ExifDateTime": "{datetime}",
@@ -90,16 +91,17 @@ where the fields/attributes are:
 | ExifDateTime | When mode is ExifFullUpdate, this can have following values:<br>**FromFileDetails**: The script will make an attempt to extract the date & time from either the Filename (using the Input\<type\>Pos attributes in the settings file. When that fails, it will use the File's Creation Date and Time to set the ExifDateTime.<br>**\<Hardcoded-DateTime\>**: A valid Date&Time value, that will be used to set the ExifDateTime. Entering a value here is required!  |
 | ExifTitle | When mode is ExifFullUpdate, can be used to set the Title. Possible use is to set this to the method how the image is aquired (e.g. "Scanned at \<Hardcoded-DateTime\>", Copied with MobilePhone, etc..). . Only used when it contains a non-blank value |
 | ProcessFolder | The folder that contains the photo and video files that you want to analyze/change. This folder can best be used to copy/paste all media you want to process into. After processing - and when satisfied with the processing results - you can use the contents of this folder to replace the original media. |
+| NewFileName | Can be either "KeepCurrent" "FromParentFolder" or the value you want to force on all files that are processed.<br>When the value is **KeepCurrent**, the new filename will be<br>*Desired Date Format- [original_file_name].\<extension\>*<br>When you specify  **FromParentFolder**, the new filename will built based on the name of its parent folder name.<br>  When any other value is used, the new filename(s) will become<br>*Desired Date Format- [your_entered_value].\<extension\>* |
 | Objects | The two possible filetypes that can be encountered in the ProcessFolder. Per object, following can be specified: |
 | Type | Can be Photo or Video. There should be one Object of each. |
-| Identifiers | The suffixes that identify the file of that type. This attribute is defined as a JSON array, meaning it can contain multiple values - so multiple file extensions. |
+| Identifiers | The suffixes that identify the file of that type. This attribute is defined as a JSON array, meaning it can contain multiple values - so multiple file extensions.<br>**Make sure you enter the values in LOWERCASE only, so .jpg, .png, and NOT .JPG or .Jpg** |
 | InputYearPos | Position in the existing filename where the four digit year can be found. |
 | InputMonthPos | Position in the existing filename where the two digit month can be found. |
 | InputDayPos | Position in the existing filename where the two digit day can be found. |
 | InputHourPos | Position in the existing filename where the two digit hour can be found. |
 | InputMinutePos | Position in the existing filename where the two digit minute can be found. |
 | InputSecondPos | Position in the existing filename where the two digit second can be found. |
-| DesiredOutputMask | The format you want to use in the new filename. When a valid new dat is discovered/determined, the new filename will be<br>*Formatted_Date - [original_file_name]*<br>See below what can be specified in the mask.   |
+| DesiredOutputMask | The date format you want to use in the new filename. When a valid new dat is discovered/determined, the new filename will be<br>*Formatted_Desired_Date - [OldFileName_or_value_of_NewFileName_Parameter].\<extension\>*<br>See below what can be specified in the mask.   |
 | **Character in mask** | **Meaning** |
 | %Y | Year of datetime. |
 | %m | Month of datetime. |

@@ -43,13 +43,7 @@ def Extract_ExifData(imagename):
 
 # for fast testing
 if __name__ == "__main__":
-    file="/home/rob/Documenten/GitHub/pyMediaNames/ProcessFolder/Gescand document.jpg"
-    results = Extract_ExifData(file)
-    print(f"Result for {file}")
-    for result in results:
-        value=results[f"{result}"]
-        print(f"{result}: {value}")
-    file="/home/rob/Documenten/GitHub/pyMediaNames/ProcessFolder/00-Diversen/2022-0507 073355 - Mooi koolzaadveld (tijdens hardlopen).jpg"
+    file="/home/rob/Documenten/GitHub/pyMediaNames/ProcessFolder/2022-0716 000000 - [2020-1023 181727 Ons muzikale talentje].JPG"
     results = Extract_ExifData(file)
     print(f"Result for {file}")
     for result in results:
