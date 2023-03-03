@@ -13,7 +13,7 @@
             "justMyCode": true
         },
         {
-            "name": "Python: ExifUpd",
+            "name": "Python: Scans-Update",
             "type": "python",
             "request": "launch",
             "program": "${file}",

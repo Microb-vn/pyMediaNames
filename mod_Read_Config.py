@@ -18,10 +18,10 @@ def Read_Config(file, scriptpath):
         # All optional parameters, plus the date:
         dummy = settingsObject["ExifDeviceMake"]
         dummy = settingsObject["ExifDeviceModel"]
-        dummy = settingsObject["FileTitle"]
+        dummy = settingsObject["ImageDescription"]
         dummy = settingsObject["NewDateTime"]
     except:
-        return "When mode is ExifFullUpdate, attributes ExifDeviceMake, ExifDeviceModel, ExifDateTime, and FileTitle must also be defined"
+        return "One (of more) of the attributes ExifDeviceMake, ExifDeviceModel, NewDateTime or ImageDescription is missing"
     # Date must also have specific value: a valid date or "FromFileDetails"
     if dummy != 'FromFileDetails':
         try:

@@ -12,7 +12,6 @@ import pathlib
 from mod_Write_Message import Write_Message
 from mod_Read_Config import Read_Config
 from mod_Process_Photo import Process_Photo
-from mod_Process_Photo_Exif import Process_Photo_Exif
 from mod_Process_Video import Process_Video
 #
 # Important functions, loaded in mainscript rather than from a custom/own library
@@ -82,9 +81,9 @@ def main():
         fileObject = None
         Write_Message("INFO", '------------------------------------------------------')
         # Did we process the file already?
-        if "]." in file.filePath:
-            Write_Message("WARNING", f"It looks like file {file.filePath} has been processed before; will take no action!")
-            continue
+        # if "]." in file.filePath:
+        #     Write_Message("WARNING", f"It looks like file {file.filePath} has been processed before; will take no action!")
+        #     continue
         # See what type of file we have
         for object in settingsObject["Objects"]:
             if file.fileExtension.lower() in object["Identifiers"]:

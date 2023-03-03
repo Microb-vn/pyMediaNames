@@ -43,9 +43,9 @@ The configuration is arranged with a *settings.json* file. This file typically l
     "ProcessFolder": "./ProcessFolder",
     "ExifDeviceMake": "HP",
     "ExifDeviceModel": "MFP M180N",
-    "FileTitle":  "Scanned at {datetime}",
+    "ImageDescription":  "Scanned at {datetime}",
     "NewDateTime": "{datetime}",
-    "NewFileName": "KeepCurrent",
+    "NewFileName": "PreserveCurrent",
     "Objects": [
         {
             "Type": "Photo",
@@ -86,7 +86,7 @@ where the fields/attributes are:
 | ProcessFolder | The folder that contains the photo and video files that you want to analyze/change. This folder can best be used to copy/paste all media you want to process into. After processing - and when satisfied with the processing results - you can use the contents of this folder to replace the original media. |
 | ExifDeviceMake | This value can be used to force a value into the Device Make in the Exif "Manufacturer" field. Only used when it contains a non-blank value |
 | ExifDeviceModel | This value can be used to force a value into the Device Model in the Exif "Model" field. Only used when it contains a non-blank value |
-| ExifTitle | This parameter can be used to set the Title. Possible use is to set this to the method how the image is aquired (e.g. "Scanned at YYYY-mm-dd", "Copied with MobilePhone", etc..). . Only used when it contains a non-blank value |
+| ImageDescription | This parameter can be used to set the (Exif) Image Description. Possible use is to set this to the method how the image is aquired (e.g. "Scanned at YYYY-mm-dd", "Copied with MobilePhone", etc..). . Only used when it contains a non-blank value |
 | NewDateTime | The way the Date&Time is determined that is used in the filename and (possible) EXIF data fields. This can have following values:<br>**FromFileDetails**: The script will make an attempt to extract the date & time from (in below order):<br>> the EXIF data<br>> the Filename (using the Input\<type\>Pos attributes in the settings file - see further down in this table).<br>> the File's Creation Date and Time.<br>**\<Hardcoded-DateTime\>**: A valid Date&Time value, that will be used to set the media's Date and Time. Entering a value for this parameter is required!  |
 | DesiredOutputMask | The date format you want to use in the new filename. When a valid new dat is discovered/determined, the new filename will be<br>*Formatted_Desired_Date - [OldFileName_or_value_of_NewFileName_Parameter].\<extension\>*<br>See below what can be specified in the mask.   |
 | | **Character in mask** | **Meaning** |
@@ -97,7 +97,7 @@ where the fields/attributes are:
 | | %I%p | Hour of datetime in 12 hour format with AM/PM indicator. Although this mask value is supported, it is strongly recommended to always is 24 hour format. This, to prevent confusion about the actual time the picture/video is taken.<br>In fact, the suggested format in the example is the most appropriate format to use. It allows you to properly sort the media in the order the pictures/videos were taken |
 | | %M | minute of datetime |
 | | %S | second of datetime |
-| NewFileName | Can be either "KeepCurrent", "FromParentFolder" or the value you want to force on all files that are processed.<br>When the value is<br>>  **KeepCurrent**, the new filename will be<br>*\<Date in Desired Date Format\> - [\<original_file_name\>].\<extension\>*<br>> **FromParentFolder**, the new filename will built based on the name of its parent folder name, so it will look like *\<Date in Desired Date Format\> - \<ParentFolderName\>.\<extension\>*.<br>  When any other value is used, the new filename(s) will become<br>*\<Date in Desired Date Format\>- \<your_entered_value\>.\<extension\>* |
+| NewFileName | Can be either "KeepCurrent", "FromParentFolder" or the value you want to force on all files that are processed.<br>When the value is<br>>  **PreserveCurrent**, the new filename will be<br>*\<Date in Desired Date Format\> - [\<original_file_name\>].\<extension\>*<br>> **FromParentFolder**, the new filename will built based on the name of its parent folder name, so it will look like *\<Date in Desired Date Format\> - \<ParentFolderName\>.\<extension\>*.<br>  When any other value is used, the new filename(s) will become<br>*\<Date in Desired Date Format\>- \<your_entered_value\>.\<extension\>* |
 | Objects | The two possible filetypes that can be encountered in the ProcessFolder. Per object, following can be specified: |
 | Type | Can be Photo or Video. There should be one Object of each. |
 | Identifiers | The suffixes that identify the file of that type. This attribute is defined as a JSON array, meaning it can contain multiple values - so multiple file extensions.<br>**Make sure you enter the values in LOWERCASE only, so .jpg, .png, and NOT .JPG or .Jpg** |
