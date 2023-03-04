@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 # Load the std Python library modules
 import os
 import sys
@@ -8,7 +7,7 @@ from datetime import datetime
 import time
 import platform
 import pathlib
-# Load own modules (globally)
+# Load own modules
 from mod_Write_Message import Write_Message
 from mod_Read_Config import Read_Config
 from mod_Process_Photo import Process_Photo

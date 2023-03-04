@@ -23,31 +23,28 @@ def Process_Photo(file, fileObject, settingsObject):
     desiredOutputMask = fileObject["DesiredOutputMask"]
 
     # Try to extract the exif data
-    if settingsObject["NewDateTime"] != "FromFileDetails":
-        fileNameDate = parse(settingsObject["NewDateTime"])
-        exifDate = False
-    else:
-        exifData = Extract_ExifData(file.filePath)
-        if type(exifData) == str:
-            exifDate=False
-            Write_Message("WARNING", f"Found NO EXIF data in photo file ({file.filePath}); will skip further processing for this file ")
-            return
-        else:
-            Write_Message("INFO", f"Found EXIF data in photo file ({file.filePath}).")
-            try:
-                # Try to compose a valid date
-                yyyy=int(exifData["DateTime"][0:4])
-                mm=int(exifData["DateTime"][5:7])
-                dd=int(exifData["DateTime"][8:10])
-                hour=int(exifData["DateTime"][11:13])
-                minute=int(exifData["DateTime"][14:16])
-                second=int(exifData["DateTime"][17:19])
-                fileNameDate = datetime(yyyy, mm, dd, hour, minute, second)
-                exifDate=True
-            except:
-                exifDate=False
+    exifData = Extract_ExifData(file.filePath)
+    if type(exifData) == str:
+        exifDate="NoEXIF"
+        Write_Message("WARNING", f"Found NO EXIF data in photo file ({file.filePath}); will skip further processing for this file ")
+        return
+CHECK THIS CODE, IT DOES NOT MAKE SENSE   
+    if settingsObject["NewDateTime"] == "FromFileDetails":
+        Write_Message("INFO", f"Found EXIF data in photo file ({file.filePath}).")
+        try:
+            # Try to compose a valid date
+            yyyy=int(exifData["DateTime"][0:4])
+            mm=int(exifData["DateTime"][5:7])
+            dd=int(exifData["DateTime"][8:10])
+            hour=int(exifData["DateTime"][11:13])
+            minute=int(exifData["DateTime"][14:16])
+            second=int(exifData["DateTime"][17:19])
+            fileNameDate = datetime(yyyy, mm, dd, hour, minute, second)
+            exifDate="EXIFDate"
+        except:
+            exifDate="NoEXIFDate"
 
-        if not exifDate:
+        if exifDate != "EXIFDate":
             Write_Message("INFO", f"Photo file ({file.fileName}) does not contain valid or complete EXIF data; will use the filename to compose date.")
             yyyy = mm = dd = hour = minute = second = None
             if len(file.fileName) >= inputDayPos+2:
@@ -72,6 +69,10 @@ def Process_Photo(file, fileObject, settingsObject):
             fileNameDate = time.strptime(time.ctime(os.path.getctime(file.filePath)))
             # Convert time tuple into datetime object
             fileNameDate = datetime.fromtimestamp(time.mktime(fileNameDate))
+    else:
+        fileNameDate = parse(settingsObject["NewDateTime"])
+        exifDate = "NoEXIFDate"
+    else:
     
     dateInDesiredFormat = fileNameDate.strftime(desiredOutputMask)
 
@@ -112,7 +113,7 @@ def Process_Photo(file, fileObject, settingsObject):
         Write_Message("INFO", f'Will set Exif DeviceModel to {settingsObject["ExifDeviceModel"]}')
         exifObjects.append(exifObject(272, settingsObject["ExifDeviceModel"]))
 
-    if not exifDate:
+    if exifDate != "EXIFDate":
         newExifDate = fileNameDate.strftime("%Y:%m:%d %H:%M:%S")
         Write_Message("INFO", f'Will set Exif Date to {newExifDate}')
         exifObjects.append(exifObject(306, newExifDate))
