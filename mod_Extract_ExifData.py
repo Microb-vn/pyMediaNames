@@ -16,34 +16,27 @@ from PIL import Image, ExifTags
 def Extract_ExifData(imagename):
     imgFile=imagename
 
-    img = Image.open(imgFile)
-    img_exif = img.getexif()
-#    print(type(img_exif))
+    try:
+        img = Image.open(imgFile)
+    except:
+        return('Cannot open the image file; invalid file format.')
 
-    if img_exif is None:
-        return('Sorry, image has no exif data.')
-    else:
-        exifObject={}
-        for key, val in img_exif.items():
-            if key in ExifTags.TAGS:
-#                print(f'{ExifTags.TAGS[key]}:{val}')
-                exifObject[ExifTags.TAGS[key]] = val
-                # ExifVersion:b'0230'
-                # ...
-                # FocalLength:(2300, 100)
-                # ColorSpace:1
-                # ...
-                # Model:'X-T2'
-                # Make:'FUJIFILM'
-                # LensSpecification:(18.0, 55.0, 2.8, 4.0)
-                # ...
-                # DateTime:'2019:12:01 21:30:07'
-                # ...
-        return(exifObject)
+    try: 
+        img_exif = img.getexif()
+    except:
+        return('Image has no exif data.')
+
+    exifObject={}
+    for key, val in img_exif.items():
+         if key in ExifTags.TAGS:
+            #print(f'{ExifTags.TAGS[key]}:{val}')
+            exifObject[ExifTags.TAGS[key]] = val
+
+    return(exifObject)
 
 # for fast testing
 if __name__ == "__main__":
-    file="/home/rob/Documenten/GitHub/pyMediaNames/ProcessFolder/2022-0716 000000 - [2020-1023 181727 Ons muzikale talentje].JPG"
+    file="/home/rob/Documenten/GitHub/pyMediaNames/ProcessFolder/Mapjje2/2023-0206 124720 - [20230206_124720].jpg"
     results = Extract_ExifData(file)
     print(f"Result for {file}")
     for result in results:

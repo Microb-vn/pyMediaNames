@@ -1,5 +1,4 @@
 #!/usr/bin/python3
-
 # Load the std Python library modules
 import os
 import sys
@@ -8,11 +7,10 @@ from datetime import datetime
 import time
 import platform
 import pathlib
-# Load own modules (globally)
+# Load own modules
 from mod_Write_Message import Write_Message
 from mod_Read_Config import Read_Config
 from mod_Process_Photo import Process_Photo
-from mod_Process_Photo_Exif import Process_Photo_Exif
 from mod_Process_Video import Process_Video
 #
 # Important functions, loaded in mainscript rather than from a custom/own library
@@ -82,9 +80,9 @@ def main():
         fileObject = None
         Write_Message("INFO", '------------------------------------------------------')
         # Did we process the file already?
-        if "]." in file.filePath:
-            Write_Message("WARNING", f"It looks like file {file.filePath} has been processed before; will take no action!")
-            continue
+        # if "]." in file.filePath:
+        #     Write_Message("WARNING", f"It looks like file {file.filePath} has been processed before; will take no action!")
+        #     continue
         # See what type of file we have
         for object in settingsObject["Objects"]:
             if file.fileExtension.lower() in object["Identifiers"]:
@@ -94,13 +92,10 @@ def main():
         # Is the file a video or photo?
         if fileObject:
             if fileObject["Type"] == "Photo":
-               Write_Message("INFO", f"file {file.filePath} is a PHOTO file; will process it as such in {settingsObject['Mode']} mode")
-               if settingsObject['Mode'] == "Standard":
-                    Process_Photo(file, fileObject, settingsObject)
-               else:
-                    Process_Photo_Exif(file, fileObject, settingsObject)
+               Write_Message("INFO", f"file {file.filePath} looks like a PHOTO file; will process it as such")
+               Process_Photo(file, fileObject, settingsObject)
             else:
-                Write_Message("INFO", f"file {file.filePath} is a VIDEO file; will process it as such in {settingsObject['Mode']} mode")
+                Write_Message("INFO", f"file {file.filePath} looks like a VIDEO file; will process it as such")
                 Process_Video(file, fileObject, settingsObject)
         else:
             Write_Message( "WARNING", f"File {file.filePath} is of an unknow file type ({file.fileExtension}); will skip the file")

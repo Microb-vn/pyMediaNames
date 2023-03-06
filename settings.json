@@ -1,7 +1,11 @@
 {
     "Mode": "Standard",
     "ProcessFolder": "./ProcessFolder",
-    "NewFileName": "FromParentFolder",
+    "NewFileName": "PreserveCurrent",
+    "NewDateTime": "FromFileDetails",
+    "ExifDeviceMake": "",
+    "ExifDeviceModel": "",
+    "ImageDescription": "",
     "Objects": [
         {
             "Type": "Photo",
