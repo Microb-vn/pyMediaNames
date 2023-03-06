@@ -25,26 +25,43 @@ def Process_Photo(file, fileObject, settingsObject):
     # Try to extract the exif data
     exifData = Extract_ExifData(file.filePath)
     if type(exifData) == str:
-        exifDate="NoEXIF"
-        Write_Message("WARNING", f"Found NO EXIF data in photo file ({file.filePath}); will skip further processing for this file ")
+        exifDate = None
+        Write_Message("WARNING", f"Cannot extract exif data from ({file.filePath}); {exifData} ")
         return
-CHECK THIS CODE, IT DOES NOT MAKE SENSE   
-    if settingsObject["NewDateTime"] == "FromFileDetails":
-        Write_Message("INFO", f"Found EXIF data in photo file ({file.filePath}).")
-        try:
-            # Try to compose a valid date
-            yyyy=int(exifData["DateTime"][0:4])
-            mm=int(exifData["DateTime"][5:7])
-            dd=int(exifData["DateTime"][8:10])
-            hour=int(exifData["DateTime"][11:13])
-            minute=int(exifData["DateTime"][14:16])
-            second=int(exifData["DateTime"][17:19])
-            fileNameDate = datetime(yyyy, mm, dd, hour, minute, second)
-            exifDate="EXIFDate"
-        except:
-            exifDate="NoEXIFDate"
 
-        if exifDate != "EXIFDate":
+    # Try to pull current values from EXIF data
+    Write_Message("INFO", f"Found EXIF data in photo file ({file.filePath}); capturing current values.")
+    # ImageDescription
+    try:
+        imageDescription = exifData["ImageDescription"]
+    except:
+        imageDescription = None
+    # Make
+    try:
+        exifMake = exifData["Make"]
+    except:
+        exifMake = None
+    # Model
+    try:
+        exifModel = exifData["Model"]
+    except:
+        exifModel = None
+    # DateTime
+    try:
+        # Try to compose a valid date
+        exifDate=exifData["DateTime"]
+        yyyy=int(exifDate[0:4])
+        mm=int(exifDate[5:7])
+        dd=int(exifDate[8:10])
+        hour=int(exifDate[11:13])
+        minute=int(exifDate[14:16])
+        second=int(exifDate[17:19])
+        fileNameDate = datetime(yyyy, mm, dd, hour, minute, second)
+    except:
+        exifDate=None
+
+    if settingsObject["NewDateTime"] == "FromFileDetails":
+        if not exifDate:
             Write_Message("INFO", f"Photo file ({file.fileName}) does not contain valid or complete EXIF data; will use the filename to compose date.")
             yyyy = mm = dd = hour = minute = second = None
             if len(file.fileName) >= inputDayPos+2:
@@ -63,6 +80,8 @@ CHECK THIS CODE, IT DOES NOT MAKE SENSE
                 fileNameDate = datetime(int(yyyy), int(mm), int(dd), int(hour), int(minute), int(second))
             except:
                 fileNameDate = None
+        else:
+            pass # we already have a valid fileNameDate pulled from the Exifdata
 
         if not fileNameDate:
             Write_Message("INFO", f"Could not compose a valid date from Photo Filename ({file.filePath}); will use the file creation date")
@@ -71,8 +90,6 @@ CHECK THIS CODE, IT DOES NOT MAKE SENSE
             fileNameDate = datetime.fromtimestamp(time.mktime(fileNameDate))
     else:
         fileNameDate = parse(settingsObject["NewDateTime"])
-        exifDate = "NoEXIFDate"
-    else:
     
     dateInDesiredFormat = fileNameDate.strftime(desiredOutputMask)
 
@@ -100,21 +117,42 @@ CHECK THIS CODE, IT DOES NOT MAKE SENSE
     #
     # Do we need to udate or add exifdate?
     Write_Message("INFO", "See if we need to make EXIF updates...")
-
+    '''
+        The EXIF fields that are not the date field get special treatment. When NO valid date was found AND
+        when the field is blank, the script will fill the EXIF data with "dummy" data to indicate that
+        the found EXIF data was blank
+    '''
     exifObjects = []
-        
-    if settingsObject["ImageDescription"] != "":
-        Write_Message("INFO", f'Will set Exif ImageDescription to {settingsObject["ImageDescription"]}')
-        exifObjects.append(exifObject(270, settingsObject["ImageDescription"]))
-    if settingsObject["ExifDeviceMake"] != "":
-        Write_Message("INFO", f'Will set Exif DeviceMake to {settingsObject["ExifDeviceMake"]}')
-        exifObjects.append(exifObject(271, settingsObject["ExifDeviceMake"]))
-    if settingsObject["ExifDeviceModel"] != "":
-        Write_Message("INFO", f'Will set Exif DeviceModel to {settingsObject["ExifDeviceModel"]}')
-        exifObjects.append(exifObject(272, settingsObject["ExifDeviceModel"]))
 
-    if exifDate != "EXIFDate":
-        newExifDate = fileNameDate.strftime("%Y:%m:%d %H:%M:%S")
+    if settingsObject["ImageDescription"] != "":
+        Write_Message("INFO", f'Will set Exif ImageDescription to value found in Settingsfile ({settingsObject["ImageDescription"]})')
+        exifObjects.append(exifObject(270, settingsObject["ImageDescription"]))
+    else:
+        if not exifDate and not imageDescription:
+            text = 'DESCRIPTION IS AUTO ADDED BY MEDIA ORGANIZER SCRIPT'
+            Write_Message("INFO", f"Will set Exif ImageDescription to {text}")
+            exifObjects.append(exifObject(270, text))
+
+    if settingsObject["ExifDeviceMake"] != "":
+        Write_Message("INFO", f'Will set Exif DeviceMake to value found in Settingsfile ({settingsObject["ExifDeviceMake"]})')
+        exifObjects.append(exifObject(271, settingsObject["ExifDeviceMake"]))
+    else:
+        if not exifDate and not exifMake:
+            text = 'SCRIPT'
+            Write_Message("INFO", f"Will set Exif Make field to {text}")
+            exifObjects.append(exifObject(271, text))
+
+    if settingsObject["ExifDeviceModel"] != "":
+        Write_Message("INFO", f'Will set Exif DeviceModel to value found in Settingsfile ({settingsObject["ExifDeviceModel"]})')
+        exifObjects.append(exifObject(272, settingsObject["ExifDeviceModel"]))
+    else:
+        if not exifDate and not exifModel:
+            text = 'pyMediaNames_V1.0'
+            Write_Message("INFO", f"Will set Exif Model field to {text}")
+            exifObjects.append(exifObject(272, text))
+
+    newExifDate = fileNameDate.strftime("%Y:%m:%d %H:%M:%S")
+    if exifDate != newExifDate:
         Write_Message("INFO", f'Will set Exif Date to {newExifDate}')
         exifObjects.append(exifObject(306, newExifDate))
         exifObjects.append(exifObject(36868, newExifDate))

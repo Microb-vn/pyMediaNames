@@ -1,14 +1,14 @@
-# PoShMediaNames
+# ptyMediaNames
 
 A set of Python scripts to make it easier to organize/standardize your photo and video file library, based on the picture and video filenames.
 
-I developed this because of a personal desire to standardize my photo and video library. These scripts helped me to organize my pictures and videos based on the filename, which - after runnning the main script - includes the date and time the media is created in a standard format. This makes the media more easy to organize and sort. The resolves the issue that when you have multiple imaging devices that use different file naming standards to store their photos/videos: with this set of scripts you can convert all filenames to use one common date&time standard.
+I developed this because of a personal desire to standardize my photo and video library. These scripts helped me to organize my pictures and videos based on the filename, which - after runnning the main script - includes the date and time the media is created in the filename in a standard format. This makes the media more easy to organize and sort. Amongst other things, it resolves the issue that when you have multiple imaging devices that use different file naming standards to store their photos/videos: this set of scripts wil help you to convert all filenames to one common date&time filename standard.
 
-The scripts also let you insert some basic EXIF information into photo media files that are missing this information, for like digitally scanned images of your classic paper photo's.
+The scripts also let you insert some basic EXIF information into photo media files that are missing this information. For example: when you digitally scanned images of your classic paper photo's, you can add information how the scans were created.
 
 The project may not suit your needs, but if it does, feel free to use it.
 
-As this project is written in Python, the target platform to run the scripts is Linux. For Windows users there is also a project that perform similar actions written in Powershell. You can find that project [here](https://github.com/Microb-vn/PoShMediaNames)
+As this project is written in Python, the target platform to run the scripts is Linux. For Windows users there is also a project written in Powershell that perform similar actions. You can find that project [here](https://github.com/Microb-vn/PoShMediaNames)
 
 # How it works
 
@@ -18,15 +18,15 @@ To use the scripts, you will need a Linux machine with Python 3.8 (or higher) in
 
 ## Processing photos and video files
 
-The main script will scan a designated (configurable) folder for photo and video files.
+The main script will scan a designated (configurable) folder for photo and video files. It uses a "SettingsFile" to provide settings that will apply to that execution.
 
 For each Video file found, it will:
 
-- Attempt to determine the date&time the video is created using it's filename. Using the fact that most (if not all) digital camera's create video files with names based on date&time of creation, this will be the prefered method of determining the media's creation date and time.
+- Attempt to determine the date&time the video is created using it's filename. Using the fact that most (if not all) digital camera's create video files with names based on date&time of creation, this will be the prefered method of determining the media's creation date and time. The way the "old" filename is formatted can be defined in the Settingsfile.
 - When this fails, and a date cannot be composed using the filename, it will use the file's creation date and time. This is less accurate, because this will most probably be the time the video file is copied from the digital camera to your computer. Mind you, that in some instances the creation date is the actual date the file is saved on your camera. Also see the warning below about file dates in Linux.
 - The found date is formatted into the desired (configurable) date format.
-- The formatted date is compared to the filename. When the filename already starts with the formatted date, no action is taken to change the filename.
-- When the filename does not start with the formatted date, the video file is renamed to *formatted-date&time - [old-filename]*
+- The 'name' part of the file is determined, base on what is in the NewFileName parameter of the used SettingsFile
+- When the filename does not start with the formatted date, or the new name does not match the desired NewFileName, the video file is renamed to *formatted-date&time - [New_Filename]*
 
 For each Photo file found, it will:
 
@@ -34,16 +34,16 @@ For each Photo file found, it will:
 - When that fails, it will try to determine the date&time the photo is created using it's filename. Using the fact that most (if not all) digital camera's create media files with names based on date&time of creation, this will be the second best method of determining the media's creation date and time.
 - When this also fails, it will use the file's creation date and time. This is less accurate, because this will most probably be the time the photo file is copied from the digital camera to your computer. Mind you, that in some instances the creation date is the actual date the file is saved on your camera. Also see the warning below about file dates in Linux.
 - The found date is formatted into the desired (configurable) date format.
-- The formatted date is compared to the filename. When the filename already starts with the formatted date, no action is taken to change the filename.
-- When the filename does not start with the formatted date, the photo file is renamed to *formatted-date&time - [old-filename]*
-- Also, when no valid EXIF data could be extracted from the picture, the EXIF date&time will be set as well. The Camera details in the EXIF data will be set to "AUTO ADDED BY SCRIPT" and "UNKNOW"
-**#>>>>>>> SCRIPT AND TEXT NEED SERIOUS REVISION AT THIS POINT <<<<<<<#**
+- The 'name' part of the file is determined, base on what is in the NewFileName parameter of the used SettingsFile
+- When the filename does not start with the formatted date, or the new name does not match the desired NewFileName, the video file is renamed to *formatted-date&time - [New_Filename]*
+- When no valid EXIF data could be extracted from the picture, the EXIF date&time will be set to what was found by the filename analyses or the file's date&time of creation. When that happens, the Camera details in the EXIF data will be set to Model:SCRIPT, Make:pyMediaNames_V1.0, ImageDescription:DESCRIPTION IS AUTO ADDED BY MEDIA ORGANIZER SCRIPT.\
+Only when the NewDateTime parameter of the settingsfile is hardcoded to a date, that date will be used to update the EXIF datetime field.
 
-> *WARNING: In linux, most filesystems do not store the file creation date, so the script will possibly return the file's last modificatiuon date. As this possibly can be #not# the actual file creation date, this may result in an inaccurate result*
+> *WARNING: In linux, most filesystems do not store the file creation date, so the script will possibly return the file's last modification date. As this possibly can be #not# the actual file creation date, this may give a less accurate result*
 
 ## Configuration
 
-The configuration is arranged with a *settings.json* file. This file typically looks like this:
+Configuration settings are arranged with a *settings.json* file. This file typically looks like this:
 
 ```json
 {
@@ -91,10 +91,10 @@ where the fields/attributes are:
 | Fieldname | Value | |
 | --- | --- | --- |
 | ProcessFolder | The folder that contains the photo and video files that you want to analyze/change. This folder can best be used to copy/paste all media you want to process into. After processing - and when satisfied with the processing results - you can use the contents of this folder to replace the original media. |
-| ExifDeviceMake | This value can be used to force a value into the Device Make in the Exif "Manufacturer" field. Only used when it contains a non-blank value. For true digital media it is recommended to leave this field blank. |
-| ExifDeviceModel | This value can be used to force a value into the Device Model in the Exif "Model" field. Only used when it contains a non-blank value. For true digital media it is recommended to leave this field blank. |
-| ImageDescription | This parameter can be used to set the (Exif) Image Description. Possible use is to set this to the method how the image is aquired (e.g. "Scanned at YYYY-mm-dd", "Copied with MobilePhone", etc..). . Only used when it contains a non-blank value.  For true digital media it is recommended to leave this field blank. |
-| NewDateTime | The way the Date&Time is determined that is used in the filename and (possible) EXIF date fields. This can have following values:<br>**FromFileDetails**: The script will make an attempt to extract the date & time from (in below order):<br>> the EXIF data (only for Photo files)<br>> the Filename (using the Input\<type\>Pos attributes in the settings file - see further down in this table).<br>> the File's Creation Date and Time.<br>*This is the best setting for processing true digital media files*<br>**\<Hardcoded-DateTime\>**: A valid Date&Time value, that will be used to set the media's Date and Time.<br><br>Entering a value for this parameter is required!  |
+| ExifDeviceMake | This value can be used to force a value into the Device Make in the Exif "Manufacturer" field. Only used when it contains a non-blank value. When processing true digital media it is recommended to leave this field blank. |
+| ExifDeviceModel | This value can be used to force a value into the Device Model in the Exif "Model" field. Only used when it contains a non-blank value. When processing true digital media it is recommended to leave this field blank. |
+| ImageDescription | This parameter can be used to set the (Exif) Image Description. Possible use is to set this to the method how the image is aquired (e.g. "Scanned at YYYY-mm-dd", "Copied with MobilePhone", etc..). . Only used when it contains a non-blank value.  When processing true digital media it is recommended to leave this field blank. |
+| NewDateTime | The way the Date&Time is determined that is used in the new filename and (possible) EXIF date fields. This can have following values:<br>**FromFileDetails**: The script will make an attempt to extract the date & time from (in below order):<br>> the EXIF data (only for Photo files)<br>> the Filename (using the Input\<type\>Pos attributes in the settings file - see further down in this table).<br>> the File's Creation Date and Time.<br>*This is the best setting for processing true digital media files*<br>**\<Hardcoded-DateTime\>**: A valid Date&Time value, that will be used to set the media's Date and Time.<br><br>Entering a value for this parameter is required!  |
 | DesiredOutputMask | The date format you want to use in the new filename. When a valid new date is discovered/determined, the new filename will be<br>*\<Date in Desired Date Format\> - \<OldFileName_or_value_of_NewFileName_Parameter\>.\<extension\>*<br>See below what can be specified in the mask.   |
 | | **Character in mask** | **Meaning** |
 | | %Y | Four character Year of datetime. |
@@ -138,11 +138,12 @@ etc.
 
 ## Using different configuration files
 
-To be able to support processing media created by different devices - and when these devices use different filename formats - you can create multiple configuration files. Just copy your settings.json file to a file with the name *\<device\>settings.json* and adjust the attributes where needed in that new file. Launch the script with parameter -SettingsFile *\<your-new-settingsfile-name\>*. Make sure the settingsfiles are in the same folder as the PoShmediaNames.ps1 script and you're good to go.
+To be able to support processing media created by different devices - and when these devices use different filename formats - you can create multiple configuration files. Just copy your settings.json file to a file with the name *\<device\>settings.json* and adjust the attributes where needed in that new file. Launch the script with parameter -SettingsFile *\<your-new-settingsfile-name\>*. That way you can create a settingsfile for each camera/mobile phone which will convert the possible different filename formats into one custom format: the one you like most.\
+Make sure the settingsfiles are in the same folder as the pymediaNames.py script and you're good to go.
 
 For safety, always run the program against a set of copies of the photo's and video's.
 
-### About **processing media images**:
+### About **processing your media images**:
 
 Best approach to process digital and/or scanned (paper) photo images depends on the media you process. Look at the below scenario's for different approaches:
 
