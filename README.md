@@ -195,3 +195,8 @@ Use the provided cmd file to launch the script, like described below:
 *which python3*
 and change the shebang line to\
 #!\<output-of-the-above-command\>
+
+# Planned Improvements/changes
+
+1) The parameter "DesiredOutputMask" is moved away from the "Objects" nodes and into the root of the parameter file.
+2) Add option to try different "Creation Date" alternatives (for different Linux distributions)

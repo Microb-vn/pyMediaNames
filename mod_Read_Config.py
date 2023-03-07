@@ -21,7 +21,7 @@ def Read_Config(file, scriptpath):
         dummy = settingsObject["ImageDescription"]
         dummy = settingsObject["NewDateTime"]
     except:
-        return "One (of more) of the attributes ExifDeviceMake, ExifDeviceModel, NewDateTime or ImageDescription is missing"
+        return "One (or more) of the attributes ExifDeviceMake, ExifDeviceModel, NewDateTime or ImageDescription is missing"
     # Date must also have specific value: a valid date or "FromFileDetails"
     if dummy != 'FromFileDetails':
         try:
