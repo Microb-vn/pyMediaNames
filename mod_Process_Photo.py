@@ -20,7 +20,7 @@ def Process_Photo(file, fileObject, settingsObject):
     inputHourPos = int(fileObject["InputHourPos"])
     inputMinutePos = int(fileObject["InputMinutePos"])
     inputSecondPos = int(fileObject["InputSecondPos"])
-    desiredOutputMask = fileObject["DesiredOutputMask"]
+    desiredOutputMask = settingsObject["DesiredOutputMask"]
 
     # Try to extract the exif data
     exifData = Extract_ExifData(file.filePath)
