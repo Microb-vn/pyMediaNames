@@ -1,10 +1,11 @@
 {
     "ProcessFolder": "./ProcessFolder",
-    "NewFileName": "PreserveCurrent",
+    "NewFileName": "FromParentFolder",
     "ExifDeviceMake": "HP",
     "ExifDeviceModel": "MFP M180N (scanner)",
-    "NewDateTime": "FromFileDetails",
+    "NewDateTime": "02-12-1955 18:00:00",
     "ImageDescription": "Image was SCANNED in March 2023",
+    "DesiredOutputMask": "%Y-%m%d %H%M%S",
     "Objects": [
         {
             "Type": "Photo",
@@ -17,8 +18,7 @@
             "InputDayPos": "7",
             "InputHourPos": "10",
             "InputMinutePos": "12",
-            "InputSecondPos": "14",
-            "DesiredOutputMask": "%Y-%m%d %H%M%S"
+            "InputSecondPos": "14"
         },
         {
             "Type": "Video",
@@ -31,8 +31,7 @@
             "InputDayPos": "6",
             "InputHourPos": "9",
             "InputMinutePos": "11",
-            "InputSecondPos": "13",
-            "DesiredOutputMask": "%Y-%m%d %H%M%S"
+            "InputSecondPos": "13"
         }
     ]
 }

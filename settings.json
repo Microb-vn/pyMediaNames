@@ -3,6 +3,7 @@
     "ProcessFolder": "./ProcessFolder",
     "NewFileName": "PreserveCurrent",
     "NewDateTime": "FromFileDetails",
+    "DesiredOutputMask": "%Y-%m%d %H%M%S",
     "ExifDeviceMake": "",
     "ExifDeviceModel": "",
     "ImageDescription": "",
@@ -18,8 +19,7 @@
             "InputDayPos": "6",
             "InputHourPos": "9",
             "InputMinutePos": "11",
-            "InputSecondPos": "13",
-            "DesiredOutputMask": "%Y-%m%d %H%M%S"
+            "InputSecondPos": "13"
         },
         {
             "Type": "Video",
@@ -32,8 +32,7 @@
             "InputDayPos": "6",
             "InputHourPos": "9",
             "InputMinutePos": "11",
-            "InputSecondPos": "13",
-            "DesiredOutputMask": "%Y-%m%d %H%M%S"
+            "InputSecondPos": "13"
         }
     ]
 }

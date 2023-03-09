@@ -19,13 +19,13 @@ def Read_Config(file, scriptpath):
         dummy = settingsObject["ExifDeviceMake"]
         dummy = settingsObject["ExifDeviceModel"]
         dummy = settingsObject["ImageDescription"]
-        dummy = settingsObject["NewDateTime"]
+        dummydate = settingsObject["NewDateTime"]
     except:
         return "One (or more) of the attributes ExifDeviceMake, ExifDeviceModel, NewDateTime or ImageDescription is missing"
     # Date must also have specific value: a valid date or "FromFileDetails"
-    if dummy != 'FromFileDetails':
+    if dummydate != 'FromFileDetails':
         try:
-            parse(dummy)
+            parse(dummydate)
         except:
             return f"The specified ExifDateTime ({dummy}) in the settingsfile ({file}) is not a valid date or 'FromFileDetails'"
     # ProcessFolder
@@ -47,6 +47,19 @@ def Read_Config(file, scriptpath):
     if not testValue:
         return f"NewFileName is missing from {file}"
 
+    if dummydate != "FromFileDetails" and testValue != "PreserveCurrent":
+        return "NewFileDate parameter is a fixed date and NewFileName is not PreserveCurrent; this will result in duplicate filenames!"
+
+    try:
+        testValue = datetime.now().strftime(settingsObject['DesiredOutputMask'])
+    except:
+        testValue = f"INVALIDMASK:{settingsObject['DesiredOutputMask']}"
+    
+    if not re.fullmatch("^[-:. 0-9]+$", testValue):
+        # Still contains alpha characters?
+        return f"The DesiredOutputMask in settingsfile {file} is invalid."
+
+
     # Object nodes
     if len(settingsObject["Objects"]) != 2:
         return f"The number of 'Objects' found in settingsfile {file} is {len(settingsObject['Objects'])}; this should be 2"
@@ -67,15 +80,6 @@ def Read_Config(file, scriptpath):
         if not testValue.isnumeric():
             return f"One of the DateTime positions of object {object['Type']} in settingsfile {file} is missing or not numeric; please check!"
         
-        try:
-            testValue = datetime.now().strftime(object['DesiredOutputMask'])
-        except:
-            testValue = f"INVALIDMASK:{object['DesiredOutputMask']}"
-        
-        if not re.fullmatch("^[-:. 0-9]+$", testValue):
-            # Still contains alpha characters?
-            return f"The DesiredOutputMask of object {object['Type']} in settingsfile {file} is invalid."
-
     if photoCount != 1 or videoCount !=1:
         return f"Mismatch in number of Video ({videoCount}) and/or Photo ({photoCount}) objects in settingsfile {file}; these should both be 1" 
 

@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import time
+from dateutil.parser import parse
 # import own modules
 from mod_Extract_ExifData import Extract_ExifData
 from mod_Update_ExifData import Update_ExifData
