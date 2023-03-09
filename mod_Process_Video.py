@@ -13,7 +13,7 @@ def Process_Video(file, fileObject, settingsObject):
     inputHourPos = int(fileObject["InputHourPos"])
     inputMinutePos = int(fileObject["InputMinutePos"])
     inputSecondPos = int(fileObject["InputSecondPos"])
-    desiredOutputMask = fileObject["DesiredOutputMask"]
+    desiredOutputMask = settingsObject["DesiredOutputMask"]
 
     if settingsObject["NewDateTime"] != "FromFileDetails":
         fileNameDate = parse(settingsObject["NewDateTime"])

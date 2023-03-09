@@ -53,6 +53,7 @@ Configuration settings are arranged with a *settings.json* file. This file typic
     "ImageDescription":  "Scanned at {datetime}",
     "NewDateTime": "{datetime}",
     "NewFileName": "PreserveCurrent",
+    "DesiredOutputMask": "%Y-%m%d %H%M%S",
     "Objects": [
         {
             "Type": "Photo",
@@ -65,8 +66,7 @@ Configuration settings are arranged with a *settings.json* file. This file typic
             "InputDayPos": "6",
             "InputHourPos": "9",
             "InputMinutePos": "11",
-            "InputSecondPos": "13",
-            "DesiredOutputMask": "%Y-%m%d %H%M%S"
+            "InputSecondPos": "13"
         },
         {
             "Type": "video",
@@ -79,8 +79,7 @@ Configuration settings are arranged with a *settings.json* file. This file typic
             "InputDayPos": "6",
             "InputHourPos": "9",
             "InputMinutePos": "11",
-            "InputSecondPos": "13",
-            "DesiredOutputMask": "%Y-%m%d %H%M%S"
+            "InputSecondPos": "13"
         }
     ]
 }
@@ -198,5 +197,4 @@ and change the shebang line to\
 
 # Planned Improvements/changes
 
-1) The parameter "DesiredOutputMask" is moved away from the "Objects" nodes and into the root of the parameter file.
-2) Add option to try different "Creation Date" alternatives (for different Linux distributions)
+- None
