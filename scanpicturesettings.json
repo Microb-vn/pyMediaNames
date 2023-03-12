@@ -1,6 +1,6 @@
 {
     "ProcessFolder": "./ProcessFolder",
-    "NewFileName": "FromParentFolder",
+    "NewFileName": "PreserveCurrent",
     "ExifDeviceMake": "HP",
     "ExifDeviceModel": "MFP M180N (scanner)",
     "NewDateTime": "02-12-1955 18:00:00",
@@ -24,7 +24,8 @@
             "Type": "Video",
             "Identifiers": [
                 ".mp4",
-                ".mov"
+                ".mov",
+                ".avi"
             ],
             "InputYearPos": "0",
             "InputMonthPos": "4",

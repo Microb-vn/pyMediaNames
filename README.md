@@ -39,7 +39,9 @@ For each Photo file found, it will:
 - When no valid EXIF data could be extracted from the picture, the EXIF date&time will be set to what was found by the filename analyses or the file's date&time of creation. When that happens, the Camera details in the EXIF data will be set to Model:SCRIPT, Make:pyMediaNames_V1.0, ImageDescription:DESCRIPTION IS AUTO ADDED BY MEDIA ORGANIZER SCRIPT.\
 Only when the NewDateTime parameter of the settingsfile is hardcoded to a date, that date will be used to update the EXIF datetime field.
 
-> *WARNING: In linux, most filesystems do not store the file creation date, so the script will possibly return the file's last modification date. As this possibly can be #not# the actual file creation date, this may give a less accurate result*
+> *WARNING1: In linux, most filesystems do not store the file creation date, so the script will possibly return the file's last modification date. As this possibly can be #not# the actual file creation date, this may give a less accurate result*
+
+> Warning2: Always be carefull not to run the script twice against the same files. The first filename date changes may have affected the filennames in such away that the date recognition rules for the filenames no longer apply. This can have undesired side effects!
 
 ## Configuration
 

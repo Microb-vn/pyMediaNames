@@ -22,6 +22,17 @@
             ],
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "Python: ERROR-Json",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "args": [
+                "-SettingsFile=scanpicturesettings.json"
+            ],
+            "console": "integratedTerminal",
+            "justMyCode": true
         }
     ]
 }

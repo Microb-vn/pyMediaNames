@@ -99,6 +99,8 @@ def main():
                 Process_Video(file, fileObject, settingsObject)
         else:
             Write_Message( "WARNING", f"File {file.filePath} is of an unknow file type ({file.fileExtension}); will skip the file")
+    Write_Message("INFO", '------------------------------------------------------')
+    Write_Message("INFO", 'All files are processes, closing...')
 
 if __name__ == '__main__':
     main()
