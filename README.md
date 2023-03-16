@@ -1,4 +1,4 @@
-# ptyMediaNames
+# pyMediaNames
 
 A set of Python scripts to make it easier to organize/standardize your photo and video file library, based on the picture and video filenames.
 
