@@ -1,7 +1,7 @@
 {
     "Mode": "Standard",
     "ProcessFolder": "./ProcessFolder",
-    "NewFileName": "PreserveCurrent",
+    "NewFileName": "FromParentFolder",
     "NewDateTime": "FromFileDetails",
     "DesiredOutputMask": "%Y-%m%d %H%M%S",
     "ExifDeviceMake": "",
